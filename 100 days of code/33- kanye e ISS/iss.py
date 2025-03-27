@@ -1,0 +1,29 @@
+import requests
+from datetime import *
+import smtplib
+
+MY_LAT = -20.334360
+MY_LNG = -40.280670
+
+parameters = {
+    "lat": MY_LAT,
+    "lng": MY_LNG,
+    "formatted": 0
+}
+
+response1 = requests.get("https://api.sunrise-sunset.org/json", params=parameters)
+data = response1.json()
+sunrise = int(data["results"]["sunrise"].split("T")[1].split(":")[0])
+sunset = int(data["results"]["sunset"].split("T")[1].split(":")[0])
+
+now = datetime.now()
+response2 = requests.get(url="http://api.open-notify.org/iss-now.json")
+data = response2.json()
+iss_latitude = float(data["iss_position"]["latitude"])
+iss_longitude = float(data["iss_position"]["longitude"])
+
+if MY_LNG-5 <= iss_longitude <= MY_LNG+5 and MY_LAT-5 <= iss_latitude <= MY_LAT+5 and sunset <= now.hour <= sunrise:
+    with smtplib.SMTP("smtp.gmail.com") as connection:
+        connection.starttls()
+        connection.login("vootopia@gmail.com", "chateau4")
+        connection.sendmail(from_addr="vootopia@gmail.com", to_addrs="mtambascof@gmail.com", msg="A estação espacial está passando por cima de você")
