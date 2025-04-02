@@ -1,12 +1,9 @@
 from bs4 import BeautifulSoup
+import requests
 
-with open("website.html") as file:
-    contents = file.read()
-
-soup = BeautifulSoup(contents, "html.parser")
+response = requests.get("https://news.ycombinator.com/news")
 
 
-# heading = soup.find(name="h1", id="name")
 
-company_url = soup.select_one(selector="p a")
-print(company_url)
+
+print(response.text)
